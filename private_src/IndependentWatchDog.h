@@ -6,11 +6,9 @@
 
 namespace hal
 {
-	/// <summary>
-	///		独立看门狗。
-	///		- 所谓独立看门狗就是具有自己的内部时钟源，不依赖单片机的系统时钟。
-	///		  在系统时钟失效时仍然能工作。
-	/// </summary>
+	/// @brief 独立看门狗。
+	/// @note 所谓独立看门狗就是具有自己的内部时钟源，不依赖单片机的系统时钟。
+	/// 在系统时钟失效时仍然能工作。
 	class IndependentWatchDog
 		: public bsp::IIndependentWatchDog,
 		  public base::HandleWrapper<IWDG_HandleTypeDef>
@@ -19,10 +17,8 @@ namespace hal
 		IWDG_HandleTypeDef _handle;
 		IndependentWatchDogConfig _config;
 
-		/// <summary>
-		///		内部时钟信号的频率。还要经过预分频才会输入到计数器。
-		/// </summary>
-		/// <returns></returns>
+		/// @brief 内部时钟信号的频率。还要经过预分频才会输入到计数器。
+		/// @return
 		uint32_t InnerClockSourceFreq_Hz() const
 		{
 			// 独立看门狗具有 40 kHz 的内部时钟。
