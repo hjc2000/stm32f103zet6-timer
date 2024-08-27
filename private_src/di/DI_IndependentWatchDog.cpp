@@ -1,7 +1,7 @@
+#include <bsp-interface/di/independent-watch-dog.h>
 #include <IndependentWatchDog.h>
-#include <bsp-interface/di.h>
 
 bsp::IIndependentWatchDog &DI_IndependentWatchDog()
 {
-	return hal::IndependentWatchDog::Instance();
+    return hal::IndependentWatchDog::Instance();
 }

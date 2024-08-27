@@ -1,6 +1,6 @@
 #include "IndependentWatchDog.h"
 #include <base/Initializer.h>
-#include <bsp-interface/di.h>
+#include <bsp-interface/di/independent-watch-dog.h>
 
 using namespace hal;
 
