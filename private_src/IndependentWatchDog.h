@@ -1,5 +1,7 @@
 #pragma once
 #include <base/HandleWrapper.h>
+#include <base/SingletonGetter.h>
+#include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/IIndependentWatchDog.h>
 #include <chrono>
 #include <IndependentWatchDogConfig.h>
@@ -30,8 +32,27 @@ namespace hal
     public:
         static IndependentWatchDog &Instance()
         {
-            static IndependentWatchDog o;
-            return o;
+            class Getter : public base::SingletonGetter<IndependentWatchDog>
+            {
+            public:
+                std::unique_ptr<IndependentWatchDog> Create() override
+                {
+                    return std::unique_ptr<IndependentWatchDog>{new IndependentWatchDog{}};
+                }
+
+                void Lock() override
+                {
+                    DI_InterruptSwitch().DisableGlobalInterrupt();
+                }
+
+                void Unlock() override
+                {
+                    DI_InterruptSwitch().EnableGlobalInterrupt();
+                }
+            };
+
+            Getter g;
+            return g.Instance();
         }
 
         IWDG_HandleTypeDef &Handle() override

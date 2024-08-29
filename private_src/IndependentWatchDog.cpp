@@ -1,14 +1,7 @@
 #include "IndependentWatchDog.h"
-#include <base/Initializer.h>
 #include <bsp-interface/di/independent-watch-dog.h>
 
 using namespace hal;
-
-static base::Initializer _init{
-    []()
-    {
-        hal::IndependentWatchDog::Instance();
-    }};
 
 void IndependentWatchDog::Initialize()
 {
