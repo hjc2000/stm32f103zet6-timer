@@ -1,5 +1,4 @@
 #pragma once
-#include <base/HandleWrapper.h>
 #include <base/SingletonGetter.h>
 #include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/IIndependentWatchDog.h>
@@ -12,8 +11,7 @@ namespace hal
     /// @note 所谓独立看门狗就是具有自己的内部时钟源，不依赖单片机的系统时钟。
     /// 在系统时钟失效时仍然能工作。
     class IndependentWatchDog final :
-        public bsp::IIndependentWatchDog,
-        public base::HandleWrapper<IWDG_HandleTypeDef>
+        public bsp::IIndependentWatchDog
     {
     private:
         IWDG_HandleTypeDef _handle;
@@ -53,11 +51,6 @@ namespace hal
 
             Getter g;
             return g.Instance();
-        }
-
-        IWDG_HandleTypeDef &Handle() override
-        {
-            return _handle;
         }
 
         IWDG_TypeDef *HardwareInstance()

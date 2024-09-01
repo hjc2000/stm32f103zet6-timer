@@ -1,13 +1,11 @@
 #pragma once
-#include <base/HandleWrapper.h>
 #include <hal.h>
 #include <stdint.h>
 
 namespace hal
 {
     /// @brief 看门狗初始化选项。
-    class IndependentWatchDogConfig final :
-        public base::HandleWrapper<IWDG_InitTypeDef>
+    class IndependentWatchDogConfig final
     {
     private:
         IWDG_InitTypeDef _config_handle;
@@ -17,7 +15,10 @@ namespace hal
         IndependentWatchDogConfig(IWDG_InitTypeDef const &o);
         IndependentWatchDogConfig &operator=(IWDG_InitTypeDef const &o);
 
-        IWDG_InitTypeDef &Handle() override;
+        operator IWDG_InitTypeDef() const
+        {
+            return _config_handle;
+        }
 
 #pragma region 分频系数
         /// @brief 看门狗预分频器分频系数

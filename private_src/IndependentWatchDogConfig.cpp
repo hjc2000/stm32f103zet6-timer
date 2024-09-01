@@ -14,11 +14,6 @@ IndependentWatchDogConfig &IndependentWatchDogConfig::operator=(IWDG_InitTypeDef
     return *this;
 }
 
-IWDG_InitTypeDef &IndependentWatchDogConfig::Handle()
-{
-    return _config_handle;
-}
-
 #pragma region 分频系数
 
 IndependentWatchDogConfig::PrescalerOption IndependentWatchDogConfig::Prescaler() const

@@ -6,7 +6,7 @@ using namespace hal;
 void IndependentWatchDog::Initialize()
 {
     _handle.Instance = HardwareInstance();
-    _handle.Init = _config.Handle();
+    _handle.Init = _config;
     HAL_IWDG_Init(&_handle);
 }
 
