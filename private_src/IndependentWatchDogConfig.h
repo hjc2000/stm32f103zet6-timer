@@ -2,7 +2,7 @@
 #include <hal.h>
 #include <stdint.h>
 
-namespace hal
+namespace bsp
 {
     /// @brief 看门狗初始化选项。
     class IndependentWatchDogConfig final
@@ -55,4 +55,4 @@ namespace hal
         uint32_t ReloadValue() const;
         void SetReloadValue(uint32_t value);
     };
-} // namespace hal
+} // namespace bsp

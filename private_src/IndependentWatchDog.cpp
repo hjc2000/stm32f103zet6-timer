@@ -2,9 +2,7 @@
 #include <bsp-interface/di/console.h>
 #include <bsp-interface/di/independent-watch-dog.h>
 
-using namespace hal;
-
-IndependentWatchDog &hal::IndependentWatchDog::Instance()
+bsp::IndependentWatchDog &bsp::IndependentWatchDog::Instance()
 {
     class Getter :
         public base::SingletonGetter<IndependentWatchDog>
@@ -30,7 +28,7 @@ IndependentWatchDog &hal::IndependentWatchDog::Instance()
     return g.Instance();
 }
 
-void hal::IndependentWatchDog::Open(std::chrono::milliseconds timeout)
+void bsp::IndependentWatchDog::Open(std::chrono::milliseconds timeout)
 {
     /*
      * 计数器的计数周期为：
@@ -82,12 +80,12 @@ void hal::IndependentWatchDog::Open(std::chrono::milliseconds timeout)
     HAL_IWDG_Init(&_handle);
 }
 
-void hal::IndependentWatchDog::Close()
+void bsp::IndependentWatchDog::Close()
 {
     DI_Console().WriteError("独立看门狗一旦开启就无法关闭。");
 }
 
-std::chrono::milliseconds hal::IndependentWatchDog::Timeout() const
+std::chrono::milliseconds bsp::IndependentWatchDog::Timeout() const
 {
     /*
      * 设计数器计数间隔为 count_interval，单位：秒。
@@ -103,7 +101,7 @@ std::chrono::milliseconds hal::IndependentWatchDog::Timeout() const
     return std::chrono::milliseconds{static_cast<int64_t>(1000) * _config.ReloadValue() * _config.GetPrescalerByUint32() / InnerClockSourceFreq_Hz()};
 }
 
-void IndependentWatchDog::Feed()
+void bsp::IndependentWatchDog::Feed()
 {
     HAL_IWDG_Refresh(&_handle);
 }

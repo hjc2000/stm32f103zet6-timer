@@ -3,5 +3,5 @@
 
 bsp::IIndependentWatchDog &DI_IndependentWatchDog()
 {
-    return hal::IndependentWatchDog::Instance();
+    return bsp::IndependentWatchDog::Instance();
 }

@@ -6,7 +6,7 @@
 #include <chrono>
 #include <IndependentWatchDogConfig.h>
 
-namespace hal
+namespace bsp
 {
     /// @brief 独立看门狗。
     /// @note 所谓独立看门狗就是具有自己的内部时钟源，不依赖单片机的系统时钟。
@@ -49,4 +49,4 @@ namespace hal
         /// @brief 喂狗。
         void Feed() override;
     };
-} // namespace hal
+} // namespace bsp
