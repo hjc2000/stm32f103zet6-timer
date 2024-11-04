@@ -63,7 +63,7 @@ void bsp::IndependentWatchDog::Open(std::chrono::milliseconds timeout)
         {
             // 最大分频和最大计数都无法表示这个时间，就按照能达到的最大值来。
             _config.SetReloadValue(0X0FFF);
-            _config.SetPrescaler(IndependentWatchDogConfig::PrescalerOption::Div256);
+            _config.SetPrescaler(IndependentWatchDogConfig_PrescalerOption::Div256);
             break;
         }
 

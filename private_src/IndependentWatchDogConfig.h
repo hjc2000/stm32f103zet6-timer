@@ -4,6 +4,18 @@
 
 namespace bsp
 {
+    /// @brief 看门狗预分频器分频系数
+    enum class IndependentWatchDogConfig_PrescalerOption
+    {
+        Div4 = IWDG_PRESCALER_4,
+        Div8 = IWDG_PRESCALER_8,
+        Div16 = IWDG_PRESCALER_16,
+        Div32 = IWDG_PRESCALER_32,
+        Div64 = IWDG_PRESCALER_64,
+        Div128 = IWDG_PRESCALER_128,
+        Div256 = IWDG_PRESCALER_256,
+    };
+
     /// @brief 看门狗初始化选项。
     class IndependentWatchDogConfig final
     {
@@ -21,22 +33,10 @@ namespace bsp
         }
 
 #pragma region 分频系数
-        /// @brief 看门狗预分频器分频系数
-        enum class PrescalerOption
-        {
-            Div4 = IWDG_PRESCALER_4,
-            Div8 = IWDG_PRESCALER_8,
-            Div16 = IWDG_PRESCALER_16,
-            Div32 = IWDG_PRESCALER_32,
-            Div64 = IWDG_PRESCALER_64,
-            Div128 = IWDG_PRESCALER_128,
-            Div256 = IWDG_PRESCALER_256,
-        };
-
         /// @brief 看门狗预分频器分频系数。
         /// @return
-        PrescalerOption Prescaler() const;
-        void SetPrescaler(PrescalerOption value);
+        IndependentWatchDogConfig_PrescalerOption Prescaler() const;
+        void SetPrescaler(IndependentWatchDogConfig_PrescalerOption value);
 
         /// @brief 根据 2 的整数幂获取分频系数。例如 PrescalerOption::Div8
         /// 是 2 的 3 次幂，于是返回 3.
