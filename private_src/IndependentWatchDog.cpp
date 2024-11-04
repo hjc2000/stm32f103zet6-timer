@@ -1,32 +1,36 @@
 #include "IndependentWatchDog.h"
+#include <bsp-interface/di/console.h>
 #include <bsp-interface/di/independent-watch-dog.h>
 
 using namespace hal;
 
-void IndependentWatchDog::Initialize()
+IndependentWatchDog &hal::IndependentWatchDog::Instance()
 {
-    _handle.Instance = HardwareInstance();
-    _handle.Init = _config;
-    HAL_IWDG_Init(&_handle);
+    class Getter :
+        public base::SingletonGetter<IndependentWatchDog>
+    {
+    public:
+        std::unique_ptr<IndependentWatchDog> Create() override
+        {
+            return std::unique_ptr<IndependentWatchDog>{new IndependentWatchDog{}};
+        }
+
+        void Lock() override
+        {
+            DI_InterruptSwitch().DisableGlobalInterrupt();
+        }
+
+        void Unlock() override
+        {
+            DI_InterruptSwitch().EnableGlobalInterrupt();
+        }
+    };
+
+    Getter g;
+    return g.Instance();
 }
 
-std::chrono::milliseconds IndependentWatchDog::WatchDogTimeoutDuration() const
-{
-    /*
-     * 设计数器计数间隔为 count_interval，单位：秒。
-     *
-     * timeout = reload_value * count_interval
-     * count_interval = 1 / count_freq
-     * count_freq = InnerClockSourceFreq_Hz / prescaler
-     *
-     * count_interval = 1 / (InnerClockSourceFreq_Hz / prescaler)
-     * count_interval = prescaler / InnerClockSourceFreq_Hz
-     * timeout = reload_value * prescaler / InnerClockSourceFreq_Hz
-     */
-    return std::chrono::milliseconds{static_cast<int64_t>(1000) * _config.ReloadValue() * _config.GetPrescalerByUint32() / InnerClockSourceFreq_Hz()};
-}
-
-void IndependentWatchDog::SetWatchDogTimeoutDuration(std::chrono::milliseconds value)
+void hal::IndependentWatchDog::Open(std::chrono::milliseconds timeout)
 {
     /*
      * 计数器的计数周期为：
@@ -49,7 +53,7 @@ void IndependentWatchDog::SetWatchDogTimeoutDuration(std::chrono::milliseconds v
      */
 
     // 所需的 (分频器计数值 + 计数器计数值)
-    uint64_t total_count = value.count() * InnerClockSourceFreq_Hz() / 1000;
+    uint64_t total_count = timeout.count() * InnerClockSourceFreq_Hz() / 1000;
 
     // 让计数器重装载值尽量大，溢出了就增大分频系数
     for (uint16_t i = 2; i <= 8; i++)
@@ -73,7 +77,30 @@ void IndependentWatchDog::SetWatchDogTimeoutDuration(std::chrono::milliseconds v
         }
     }
 
-    Initialize();
+    _handle.Instance = HardwareInstance();
+    _handle.Init = _config;
+    HAL_IWDG_Init(&_handle);
+}
+
+void hal::IndependentWatchDog::Close()
+{
+    DI_Console().WriteError("独立看门狗一旦开启就无法关闭。");
+}
+
+std::chrono::milliseconds hal::IndependentWatchDog::Timeout() const
+{
+    /*
+     * 设计数器计数间隔为 count_interval，单位：秒。
+     *
+     * timeout = reload_value * count_interval
+     * count_interval = 1 / count_freq
+     * count_freq = InnerClockSourceFreq_Hz / prescaler
+     *
+     * count_interval = 1 / (InnerClockSourceFreq_Hz / prescaler)
+     * count_interval = prescaler / InnerClockSourceFreq_Hz
+     * timeout = reload_value * prescaler / InnerClockSourceFreq_Hz
+     */
+    return std::chrono::milliseconds{static_cast<int64_t>(1000) * _config.ReloadValue() * _config.GetPrescalerByUint32() / InnerClockSourceFreq_Hz()};
 }
 
 void IndependentWatchDog::Feed()
