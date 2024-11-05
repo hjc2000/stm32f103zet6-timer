@@ -7,6 +7,11 @@
 #include <hal.h>
 #include <stdint.h>
 
+extern "C"
+{
+    void SysTick_Handler();
+}
+
 namespace bsp
 {
     class SysTickClock :
@@ -16,6 +21,8 @@ namespace bsp
         SysTickClock() = default;
 
         std::function<void()> _elapsed_handler;
+
+        friend void ::SysTick_Handler();
 
     public:
         static_function SysTickClock &Instance();

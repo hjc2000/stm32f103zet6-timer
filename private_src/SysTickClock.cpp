@@ -1,4 +1,24 @@
 #include "SysTickClock.h"
+#include <bsp-interface/di/delayer.h>
+
+extern "C"
+{
+    /// @brief 重写 __weak 的 HAL_Delay 函数
+    /// @param ms 要延时的毫秒数。
+    void HAL_Delay(uint32_t ms)
+    {
+        DI_Delayer().Delay(std::chrono::milliseconds{ms});
+    }
+
+    void SysTick_Handler()
+    {
+        HAL_IncTick();
+        if (bsp::SysTickClock::Instance()._elapsed_handler)
+        {
+            bsp::SysTickClock::Instance()._elapsed_handler();
+        }
+    }
+}
 
 bsp::SysTickClock &bsp::SysTickClock::Instance()
 {
