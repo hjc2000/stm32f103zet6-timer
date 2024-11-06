@@ -2,9 +2,7 @@
 #include <bsp-interface/di/interrupt.h>
 #include <stdexcept>
 
-using namespace hal;
-
-void BaseTimer1::Initialize(BaseTimerConfig const &config)
+void bsp::BaseTimer1::Initialize(BaseTimerConfig const &config)
 {
     __HAL_RCC_TIM6_CLK_ENABLE();
     _handle.Instance = TIM6;
@@ -26,11 +24,37 @@ void BaseTimer1::Initialize(BaseTimerConfig const &config)
         });
 }
 
-void hal::BaseTimer1::Open()
+bsp::BaseTimer1 &bsp::BaseTimer1::Instance()
+{
+    class Getter :
+        public base::SingletonGetter<BaseTimer1>
+    {
+    public:
+        std::unique_ptr<BaseTimer1> Create() override
+        {
+            return std::unique_ptr<BaseTimer1>{new BaseTimer1{}};
+        }
+
+        void Lock() override
+        {
+            DI_InterruptSwitch().DisableGlobalInterrupt();
+        }
+
+        void Unlock() override
+        {
+            DI_InterruptSwitch().EnableGlobalInterrupt();
+        }
+    };
+
+    Getter g;
+    return g.Instance();
+}
+
+void bsp::BaseTimer1::Open()
 {
 }
 
-void hal::BaseTimer1::Start(std::chrono::milliseconds period)
+void bsp::BaseTimer1::Start(std::chrono::milliseconds period)
 {
     uint32_t timer_clock_signal_freq = HAL_RCC_GetPCLK1Freq();
     RCC_ClkInitTypeDef def;
@@ -74,12 +98,12 @@ void hal::BaseTimer1::Start(std::chrono::milliseconds period)
     HAL_TIM_Base_Start_IT(&_handle);
 }
 
-void BaseTimer1::Stop()
+void bsp::BaseTimer1::Stop()
 {
     HAL_TIM_Base_Stop_IT(&_handle);
 }
 
-void hal::BaseTimer1::SetElapsedHandle(std::function<void()> func)
+void bsp::BaseTimer1::SetElapsedHandle(std::function<void()> func)
 {
     DI_InterruptSwitch().DoGlobalCriticalWork(
         [&]()

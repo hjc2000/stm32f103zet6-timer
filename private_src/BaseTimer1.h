@@ -1,11 +1,13 @@
 #pragma once
 #include <atomic>
 #include <base/define.h>
+#include <base/di/SingletonGetter.h>
 #include <BaseTimerConfig.h>
+#include <bsp-interface/di/interrupt.h>
 #include <bsp-interface/timer/IBaseTimer.h>
 #include <functional>
 
-namespace hal
+namespace bsp
 {
     /// @brief TIM6 和 TIM7 是基本定时器。具有 16 位的预分频器和 16 位的计数器。将分频器也看作计数器的话，
     /// 则是一个 32 位的计数器。其中，预分频器是低 16 位，16 位的计数器是高 16 位。
@@ -21,11 +23,7 @@ namespace hal
         void Initialize(BaseTimerConfig const &config);
 
     public:
-        static_function BaseTimer1 &Instance()
-        {
-            static BaseTimer1 o;
-            return o;
-        }
+        static_function BaseTimer1 &Instance();
 
         /// @brief 初始化定时器
         /// @param period 定时周期
@@ -44,4 +42,4 @@ namespace hal
         /// @param func
         void SetElapsedHandle(std::function<void()> func) override;
     };
-} // namespace hal
+} // namespace bsp
