@@ -33,12 +33,12 @@ bsp::SysTickClock &bsp::SysTickClock::Instance()
 
         void Lock() override
         {
-            DI_InterruptSwitch().DisableGlobalInterrupt();
+            DI_DisableGlobalInterrupt();
         }
 
         void Unlock() override
         {
-            DI_InterruptSwitch().EnableGlobalInterrupt();
+            DI_EnableGlobalInterrupt();
         }
     };
 
@@ -86,7 +86,7 @@ uint32_t bsp::SysTickClock::ReloadValue() const
 
 void bsp::SysTickClock::SetElapsedHandler(std::function<void()> func)
 {
-    DI_InterruptSwitch().DoGlobalCriticalWork(
+    DI_DoGlobalCriticalWork(
         [&]()
         {
             _elapsed_handler = func;

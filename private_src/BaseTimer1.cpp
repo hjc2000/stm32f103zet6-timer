@@ -37,12 +37,12 @@ bsp::BaseTimer1 &bsp::BaseTimer1::Instance()
 
         void Lock() override
         {
-            DI_InterruptSwitch().DisableGlobalInterrupt();
+            DI_DisableGlobalInterrupt();
         }
 
         void Unlock() override
         {
-            DI_InterruptSwitch().EnableGlobalInterrupt();
+            DI_EnableGlobalInterrupt();
         }
     };
 
@@ -94,7 +94,7 @@ void bsp::BaseTimer1::Start(std::chrono::milliseconds period)
     options._is_auto_reload_preload_enabled = true;
     Initialize(options);
 
-    DI_InterruptSwitch().EnableInterrupt(TIM6_IRQn, 10);
+    DI_EnableInterrupt(TIM6_IRQn, 10);
     HAL_TIM_Base_Start_IT(&_handle);
 }
 
@@ -105,7 +105,7 @@ void bsp::BaseTimer1::Stop()
 
 void bsp::BaseTimer1::SetElapsedHandle(std::function<void()> func)
 {
-    DI_InterruptSwitch().DoGlobalCriticalWork(
+    DI_DoGlobalCriticalWork(
         [&]()
         {
             _on_period_elapsed = func;
